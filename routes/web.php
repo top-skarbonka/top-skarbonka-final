@@ -5,6 +5,7 @@ use App\Http\Controllers\CompanyAuthController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientQrController;
+use App\Http\Controllers\AdminCompanyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,36 +30,21 @@ Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])
 Route::post('/admin/login', [AdminAuthController::class, 'login'])
     ->name('admin.login.submit');
 
-// Dashboard admina (po zalogowaniu)
 Route::middleware('auth:admin')->group(function () {
+    // Dashboard admina
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
+
+    // Formularz dodawania firm
+    Route::get('/admin/companies/create', [AdminCompanyController::class, 'create'])
+        ->name('admin.companies.create');
+
+    // Zapis firmy
+    Route::post('/admin/companies', [AdminCompanyController::class, 'store'])
+        ->name('admin.companies.store');
 
     // Wylogowanie admina
     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])
         ->name('admin.logout');
 });
-
-/*
-|--------------------------------------------------------------------------
-| Panel klienta
-|--------------------------------------------------------------------------
-*/
-Route::get('/client/login', [ClientAuthController::class, 'showLoginForm'])
-    ->name('client.login');
-
-Route::post('/client/login', [ClientAuthController::class, 'login'])
-    ->name('client.login.submit');
-
-/*
-|--------------------------------------------------------------------------
-| Generowanie kodów QR przez klienta
-|--------------------------------------------------------------------------
-*/
-Route::get('/client/generate-qr', function () {
-    return view('generate-qr');
-})->name('client.generateQr');
-
-Route::post('/client/generate-qr', [ClientQrController::class, 'store'])
-    ->name('client.generateQr.submit');
